@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+chan platooning, leading,following, autonomous, follower_default, leader_default, exiting;
+int[0,1] platoon_approved:=1;
+int[0,1] exit_approved:=1;
+int[0,1] follower_approved:=1;
+int[0,1] leader_approved:=1;</declaration>
+	<template>
+		<name x="5" y="5">Overall_state</name>
+		<declaration>// Place local declarations here.</declaration>
+		<location id="id0" x="-595" y="8">
+			<name x="-688" y="-25">Autonomous</name>
+			<committed/>
+		</location>
+		<location id="id1" x="-127" y="8">
+			<name x="-119" y="-26">Platooning</name>
+			<committed/>
+		</location>
+		<location id="id2" x="-348" y="8">
+			<name x="-416" y="-25">request_platooning</name>
+			<committed/>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="-476" y="-110">autonomous?</label>
+			<nail x="-127" y="-93"/>
+			<nail x="-595" y="-93"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-552" y="68">platoon_approved==0</label>
+			<nail x="-348" y="68"/>
+			<nail x="-595" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id2"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-306" y="8">platoon_approved==1</label>
+			<label kind="synchronisation" x="-255" y="-17">platooning!</label>
+		</transition>
+	</template>
+	<template>
+		<name>Platooning_state</name>
+		<location id="id3" x="-450" y="-68">
+			<name x="-459" y="-102">idle</name>
+			<committed/>
+		</location>
+		<location id="id4" x="-34" y="-68">
+			<name x="-59" y="-110">Leader</name>
+			<committed/>
+		</location>
+		<location id="id5" x="-255" y="-68">
+			<name x="-280" y="-42">Follower</name>
+			<committed/>
+		</location>
+		<init ref="id3"/>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="34" y="-76">leader_default!</label>
+			<nail x="25" y="-110"/>
+			<nail x="25" y="-34"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-612" y="-76">autonomous!</label>
+			<nail x="-518" y="-110"/>
+			<nail x="-518" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-306" y="-136">follower_default!</label>
+			<nail x="-297" y="-119"/>
+			<nail x="-212" y="-119"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-391" y="-25">exiting?</label>
+			<nail x="-297" y="-25"/>
+			<nail x="-425" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-170" y="-25">following?</label>
+			<nail x="-68" y="-25"/>
+			<nail x="-221" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-161" y="-85">leading?</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-408" y="-93">platooning?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Follower_state</name>
+		<location id="id6" x="-535" y="76">
+			<name x="-586" y="42">idle</name>
+			<committed/>
+		</location>
+		<location id="id7" x="-238" y="76">
+			<name x="-212" y="68">Default</name>
+			<committed/>
+		</location>
+		<location id="id8" x="-238" y="-102">
+			<name x="-221" y="-127">request_exit</name>
+			<committed/>
+		</location>
+		<location id="id9" x="-238" y="246">
+			<name x="-255" y="263">request_leading</name>
+			<committed/>
+		</location>
+		<init ref="id6"/>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-187" y="153">leader_approved==0</label>
+			<nail x="-195" y="204"/>
+			<nail x="-195" y="110"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-178" y="-34">exit_approved==0</label>
+			<nail x="-187" y="-59"/>
+			<nail x="-187" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-459" y="-127">exit_approved==1</label>
+			<label kind="synchronisation" x="-408" y="-102">exiting!</label>
+			<nail x="-535" y="-102"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-467" y="246">leader_approved==1</label>
+			<label kind="synchronisation" x="-425" y="221">leading!</label>
+			<nail x="-535" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id9"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id8"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="-450" y="51">follower_default?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Leader_state</name>
+		<location id="id10" x="-263" y="0">
+			<name x="-306" y="-17">idle</name>
+			<committed/>
+		</location>
+		<location id="id11" x="-68" y="0">
+			<name x="-78" y="-34">Default</name>
+			<committed/>
+		</location>
+		<location id="id12" x="144" y="0">
+			<name x="161" y="-17">request_following</name>
+			<committed/>
+		</location>
+		<init ref="id10"/>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-25" y="59">follower_approved==0</label>
+			<nail x="144" y="59"/>
+			<nail x="-68" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-144" y="-110">follower_approved==1</label>
+			<label kind="synchronisation" x="-110" y="-85">following!</label>
+			<nail x="144" y="-85"/>
+			<nail x="-263" y="-85"/>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id12"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="-229" y="0">leader_default?</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+
+// List one or more processes to be composed into a system.
+system Overall_state, Platooning_state, Follower_state, Leader_state;
+    </system>
+	<queries>
+		<query>
+			<formula>A[] not(Follower_state.Default and Leader_state.Default)</formula>
+			<comment>It is not possible to be a follower and leader at the same time</comment>
+		</query>
+		<query>
+			<formula>A[] not(Overall_state.Autonomous and Follower_state.Default)</formula>
+			<comment>It is not possible to be in autonomous mode and follow the platoon at the same time</comment>
+		</query>
+		<query>
+			<formula>A[] not(Overall_state.Autonomous and Leader_state.Default)</formula>
+			<comment>It is not possible to be in Autonomous mode and leading the platoon at the same time</comment>
+		</query>
+	</queries>
+</nta>
